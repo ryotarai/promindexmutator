@@ -32,7 +32,7 @@ func main() {
 func mutateLabels(lbls labels.Labels) []labels.Labels {
 	for i, l := range lbls {
 		if l.Name == "__name__" {
-            l.Value = "mutated_" + l.Value
+			l.Value = "mutated_" + l.Value
 			lbls[i] = l
 		}
 	}
