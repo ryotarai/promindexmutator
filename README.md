@@ -47,4 +47,4 @@ It is recommended to stop Prometheus before mutating index.
 
 ## Example
 
-example/node_exporter_16_labels converts v0.15 to v0.16 labels of [node_exporter](https://github.com/prometheus/node_exporter).
+[example/node_exporter_16_labels](https://github.com/ryotarai/promindexmutator/tree/master/example/node_exporter_16_labels) converts v0.15 to v0.16 labels of [node_exporter](https://github.com/prometheus/node_exporter).
