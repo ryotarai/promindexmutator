@@ -15,7 +15,8 @@ type Mutator struct {
 	Options
 }
 
-type LabelsMutator func(lbls labels.Labels) []labels.Labels
+type LabelsMap map[string]string
+type LabelsMutator func(lbls LabelsMap) []LabelsMap
 
 type Options struct {
 	LabelsMutator LabelsMutator
@@ -29,8 +30,8 @@ type series struct {
 
 func New(options Options) *Mutator {
 	if options.LabelsMutator == nil {
-		options.LabelsMutator = func(lbls labels.Labels) []labels.Labels {
-			return []labels.Labels{lbls}
+		options.LabelsMutator = func(lbls LabelsMap) []LabelsMap {
+			return []LabelsMap{lbls}
 		}
 	}
 
@@ -79,7 +80,8 @@ func (r *Mutator) Run(input, output string) error {
 			return errors.Wrap(err, "reader.Series")
 		}
 
-		for _, lbls := range r.LabelsMutator(origLbls) {
+		for _, m := range r.LabelsMutator(origLbls.Map()) {
+			lbls := labels.FromMap(m)
 			allChunks = append(allChunks, labeledChunks{lbls: lbls, chks: chks})
 
 			for _, lbl := range lbls {

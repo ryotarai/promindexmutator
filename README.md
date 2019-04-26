@@ -7,7 +7,7 @@ promindexmutator mutates Prometheus TSDB index. Currently, it only mutates label
 It can be used as Go library. For example, the following code does:
 
 1. Read `index` index file
-2. Prepend `mutated_` prefix to metric name
+2. Prepend `mutated_` prefix to label values
 3. Write `index.out` index file
 
 ```go
@@ -17,7 +17,6 @@ import (
 	"log"
 
 	"github.com/ryotarai/promindexmutator"
-	"github.com/prometheus/tsdb/labels"
 )
 
 func main() {
@@ -29,14 +28,12 @@ func main() {
 	}
 }
 
-func mutateLabels(lbls labels.Labels) []labels.Labels {
-	for i, l := range lbls {
-		if l.Name == "__name__" {
-			l.Value = "mutated_" + l.Value
-			lbls[i] = l
-		}
+func mutateLabels(lbls promindexmutator.LabelsMap) []promindexmutator.LabelsMap {
+	newLbls := promindexmutator.LabelsMap{}
+	for k, v := range lbls {
+		newLbls[k] = "mutated_" v
 	}
-	return []labels.Labels{lbls}
+	return []promindexmutator.LabelsMap{newLbls}
 }
 ```
 

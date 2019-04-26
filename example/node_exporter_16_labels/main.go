@@ -6,8 +6,6 @@ import (
 	"strings"
 
 	"github.com/ryotarai/promindexmutator"
-
-	"github.com/prometheus/tsdb/labels"
 )
 
 func main() {
@@ -32,38 +30,23 @@ func main() {
 	log.Println("done")
 }
 
-func mutateLabels(lbls labels.Labels) []labels.Labels {
-	var origName string
-	for i, l := range lbls {
-		if l.Name == "__name__" {
-			origName = l.Value
-			if v, ok := nameTable[origName]; ok {
-				l.Value = v
-				lbls[i] = l
-			}
-		}
+func mutateLabels(lbls promindexmutator.LabelsMap) []promindexmutator.LabelsMap {
+	origName := lbls["__name__"]
+
+	if v, ok := nameTable[origName]; ok {
+		lbls["__name__"] = v
 	}
 
 	switch origName {
 	case "node_cpu":
-		for i, l := range lbls {
-			if l.Name == "cpu" {
-				l.Value = strings.TrimPrefix(l.Value, "cpu")
-				lbls[i] = l
-			}
-		}
+		lbls["cpu"] = strings.TrimPrefix(lbls["cpu"], "cpu")
 	case "node_nfs_procedures":
-		for i, l := range lbls {
-			switch l.Name {
-			case "version":
-				l.Name = "proto"
-				lbls[i] = l
-			case "procedure":
-				l.Name = "method"
-				lbls[i] = l
-			}
-		}
+		lbls["proto"] = lbls["version"]
+		lbls["method"] = lbls["procedure"]
+
+		delete(lbls, "version")
+		delete(lbls, "procedure")
 	}
 
-	return []labels.Labels{lbls}
+	return []promindexmutator.LabelsMap{lbls}
 }
