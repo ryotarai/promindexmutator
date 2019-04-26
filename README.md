@@ -31,7 +31,7 @@ func main() {
 func mutateLabels(lbls promindexmutator.LabelsMap) []promindexmutator.LabelsMap {
 	newLbls := promindexmutator.LabelsMap{}
 	for k, v := range lbls {
-		newLbls[k] = "mutated_" v
+		newLbls[k] = "mutated_" + v
 	}
 	return []promindexmutator.LabelsMap{newLbls}
 }
